@@ -1,0 +1,22 @@
+version: '2'
+services:
+  db:
+    image: mongo:3.2
+    entrypoint: mongod --smallfiles
+    volumes:
+      - mongo_db_data:/data/db
+    networks:
+      - default
+  rocketchat:
+    image: rocket.chat:latest
+    environment:
+      - ROOT_URL
+    labels:
+      - traefik.port=3000
+    networks:
+      - default
+      - public
+networks:
+  public:
+    external:
+      name: public

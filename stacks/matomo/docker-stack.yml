@@ -1,0 +1,42 @@
+version: '2'
+services:
+  mariadb:
+    image: 'bitnami/mariadb:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=matomo
+      - MARIADB_DATABASE=matomo
+    networks:
+      - default
+    volumes:
+      - 'mariadb_data:/bitnami'
+  matomo:
+    image: 'bitnami/matomo:latest'
+    environment:
+      - MATOMO_USERNAME
+      - MATOMO_PASSWORD
+      - MATOMO_EMAIL
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT_NUMBER=3306
+      - MATOMO_DATABASE_USER=matomo
+      - MATOMO_DATABASE_NAME=matomo
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - default
+      - public
+    labels:
+      - traefik.port=80
+    volumes:
+      - 'matomo_data:/bitnami'
+    depends_on:
+      - mariadb
+volumes:
+  mariadb_data:
+    driver: local
+  matomo_data:
+    driver: local
+networks:
+  public:
+    external:
+      name: public
+
